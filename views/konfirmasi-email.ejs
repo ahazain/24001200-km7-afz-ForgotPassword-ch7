@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lupa Password</title>
+  </head>
+  <body>
+    <h2>Lupa Password</h2>
+    <form action="/konfirmasi-email" method="POST">
+      <label for="email">Enter your email address</label>
+      <input type="email" id="email" name="email" required />
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="notifications"></div>
+    <% if (typeof error !== 'undefined') { %>
+    <div style="color: red"><%= error %></div>
+    <% } %>
+    <script>
+      const socket = io();
+      socket.on("notification", (message) => {
+        const notificationsDiv = document.getElementById("notifications");
+        const notificationElement = document.createElement("div");
+        notificationElement.textContent = message;
+        notificationsDiv.appendChild(notificationElement);
+      });
+
+      document
+        .getElementById("resetPasswordForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const email = document.getElementById("email").value;
+
+          const response = await fetch("/konfirmasi-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          });
+
+          if (response.ok) {
+            document.getElementById("email").value = "";
+          } else {
+            const result = await response.json();
+            const notificationsDiv = document.getElementById("notifications");
+            const errorElement = document.createElement("div");
+            errorElement.style.color = "red";
+            errorElement.textContent = result.error || "Terjadi kesalahan.";
+            notificationsDiv.appendChild(errorElement);
+          }
+        });
+    </script>
+  </body>
+</html>

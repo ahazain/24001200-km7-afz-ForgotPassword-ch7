@@ -1,0 +1,28 @@
+<form action="/login" method="post">
+  <div>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required />
+  </div>
+  <div>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required />
+    <br />
+    <a href="/konfirmasi-email">lupa kata sandi</a>
+  </div>
+  <input type="submit" value="Login" />
+</form>
+<div id="notifications"></div>
+
+<% if (typeof error !== 'undefined') { %>
+<div style="color: red"><%= error %></div>
+<% } %>
+<script>
+  const socket = io();
+
+  socket.on("notification", (message) => {
+    const notificationsDiv = document.getElementById("notifications");
+    const notificationElement = document.createElement("div");
+    notificationElement.textContent = message;
+    notificationsDiv.appendChild(notificationElement);
+  });
+</script>
